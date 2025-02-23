@@ -4,6 +4,7 @@ import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart
 import 'package:image_picker/image_picker.dart';
 import '../services/text_service.dart';
 import '../utils/utils.dart';
+import 'data_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -17,16 +18,16 @@ class _HomeScreenState extends State<HomeScreen> {
   XFile? file;
   final textRecognizer = TextRecognizer();
   String recognizedText = '';
-  Map<String,dynamic> extractedComposition = {};
 
-  void _pickImage(bool fromCamera) async {
+  // This Function Pick an image and extracts data from it and return that text.
+  void _pickImageAndExtractText(bool fromCamera) async {
     XFile? image = await _picker.pickImage(
         source: fromCamera ? ImageSource.camera : ImageSource.gallery);
     if (image == null) return;
     setState(() {
       file = image;
     });
-    
+    recognizedText = await TextService().recognizeText(image);
   }
 
   @override
@@ -58,29 +59,38 @@ class _HomeScreenState extends State<HomeScreen> {
                       : Container(),
                   ElevatedButton(
                       onPressed: () {
-                        _pickImage(true);
+                        _pickImageAndExtractText(true);
                       },
                       child: Text('Pick Image from Camera')),
                   ElevatedButton(
                       onPressed: () {
-                        _pickImage(false);
+                        _pickImageAndExtractText(false);
                       },
                       child: Text('Pick Image from Gallery')),
                   ElevatedButton(
                       onPressed: () {
-                        if (file != null) {
-                          extractedComposition =
-                              TextService().extractCompositions(recognizedText);
-                        } else {
-                          Utils.errorSnackBar(
-                              context, "Please pick an image first!!");
-                        }
+                        getCompositions(context);
                       },
                       child: Text('Extract Compositions')),
-                  // Text("Raw Text:$recognizedText"),
-                  // Text("extractedComposition: $extractedComposition")
                 ]),
           ),
         ));
+  }
+
+  void getCompositions(BuildContext context) {
+    if (file != null &&  recognizedText.isNotEmpty) {
+      Map<String, dynamic> extractedComposition =
+          TextService().extractCompositions(recognizedText);
+      if (extractedComposition.isNotEmpty) {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => DataScreen(
+                      data: extractedComposition,
+                    )));
+      }
+    } else {
+      Utils.errorSnackBar(context, "Please pick an image first!!");
+    }
   }
 }

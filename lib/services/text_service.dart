@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:livoai/models/compositions_model.dart';
 
 class TextService {
   final TextRecognizer textRecognizer = TextRecognizer();
@@ -9,7 +10,7 @@ class TextService {
   Future<String> recognizeText(XFile image) async {
     final RecognizedText recognizedText = await textRecognizer
         .processImage(InputImage.fromFile(File(image.path)));
-    // log("Text: ${recognizedText.text}");
+    log("Text: ${recognizedText.text}");
 
     return recognizedText.text;
   }
@@ -36,8 +37,8 @@ class TextService {
     List<Match> matches = generalPattern.allMatches(text).toList();
     List<String> compositions =
         matches.map((match) => match.group(0)!).toList();
-    List<String> keys = matches.map((match) => match.group(3)!).toList();
-    log(keys.toString());
+    // List<String> keys = matches.map((match) => match.group(3)!).toList();
+    // log(keys.toString());
     for (var item in compositions) {
       log("- $item");
     }
@@ -48,7 +49,6 @@ class TextService {
     Map<String, dynamic> data = {};
     RegExp getName = RegExp(r"(\b\w+\b)");
     RegExp getLevel = RegExp(r"(\d+(\.\d+)?)");
-
     for (var item in compositions) {
       data.addAll(
           {getName.stringMatch(item).toString(): getLevel.stringMatch(item)});

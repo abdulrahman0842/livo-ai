@@ -39,7 +39,10 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text("Livo AI")),
+        appBar: AppBar(title: Text("Livo AI"),
+        actions: [IconButton(onPressed: (){
+          // showDialog(context: context, builder:(context)=>AlertDialog())
+        }, icon: Icon(Icons.add))],),
         body: SingleChildScrollView(
           child: Center(
             child: Column(

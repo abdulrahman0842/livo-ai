@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:livoai/services/api_service.dart';
 
 class DataScreen extends StatefulWidget {
   const DataScreen({super.key, required this.data});
@@ -9,6 +10,8 @@ class DataScreen extends StatefulWidget {
 }
 
 class _DataScreenState extends State<DataScreen> {
+
+  final apiController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,7 +48,11 @@ class _DataScreenState extends State<DataScreen> {
                     }),
               ),
             ),
-            ElevatedButton(onPressed: () {}, child: Text("Predict")),
+            TextField(controller: apiController,decoration: InputDecoration(hintText: "API ENDPOINT"),),
+            ElevatedButton(onPressed: () {
+
+              ApiService().predictDisease(widget.data,apiController.text);
+            }, child: Text("Predict")),
             SizedBox()
           ],
         ),

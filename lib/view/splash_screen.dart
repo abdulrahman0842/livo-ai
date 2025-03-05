@@ -37,23 +37,24 @@ class _SplashScreenState extends State<SplashScreen> {
     return Scaffold(
       body: Center(
           child: Column(
-            
-            mainAxisAlignment:MainAxisAlignment.center, children: [
-        Container(
-            height: MediaQuery.of(context).size.height * 0.15,
-            width: MediaQuery.of(context).size.height * 0.15,
-            decoration: BoxDecoration(
-                image: DecorationImage(
-                    fit: BoxFit.cover,
-                    image: AssetImage('assets/images/logo.png')))),
-        Text(
-          "L I V O  A I",
-          style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w600,
-              color: Colors.teal.shade400),
-        )
-      ])),
+              spacing: 20,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+            Container(
+                height: MediaQuery.of(context).size.height * 0.2,
+                width: MediaQuery.of(context).size.height * 0.2,
+                decoration: BoxDecoration(
+                    image: DecorationImage(
+                        fit: BoxFit.cover,
+                        image: AssetImage('assets/images/logo.png')))),
+            Text(
+              "L I V O  A I",
+              style: TextStyle(
+                  fontSize: 30,
+                  fontWeight: FontWeight.w800,
+                  color: Colors.teal.shade400),
+            )
+          ])),
     );
   }
 }

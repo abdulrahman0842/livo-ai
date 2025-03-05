@@ -140,52 +140,65 @@ class _LiverTestFormState extends State<LiverTestForm> {
                     );
                   }),
                   SizedBox(height: 20),
-                  SizedBox(
-                    width: double.infinity,
-                    child: CustomElevatedButton(
-                      label: "Detect",
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          Map<String, int> formData = {
-                            "Age": int.tryParse(_controllers[0].text) ?? 0,
-                            "Gender": selectedGender,
-                            "Total Bilirubin":
-                                int.tryParse(_controllers[1].text) ?? 0,
-                            "Direct Bilirubin":
-                                int.tryParse(_controllers[2].text) ?? 0,
-                            "Alkaline Phosphotase":
-                                int.tryParse(_controllers[3].text) ?? 0,
-                            "Alamine Aminotransferase":
-                                int.tryParse(_controllers[4].text) ?? 0,
-                            "Aspartate Aminotransferase":
-                                int.tryParse(_controllers[5].text) ?? 0,
-                            "Total Proteins":
-                                int.tryParse(_controllers[6].text) ?? 0,
-                            "Albumin": int.tryParse(_controllers[7].text) ?? 0,
-                            "Albumin and Globulin Ratio":
-                                int.tryParse(_controllers[8].text) ?? 0,
-                          };
-
-                          provider.detectDisease(formData);
-                          
-                          showDialog(
-                            context: context,
-                            builder: (context) {
-                              return AlertDialog(
-                                title: Text("Result"),
-                                content: Text(provider.result),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () => Navigator.pop(context),
-                                    child: Text("OK"),
-                                  )
-                                ],
-                              );
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextButton(
+                            onPressed: () {
+                              for (var item in _controllers) {
+                                item.clear();
+                              }
                             },
-                          );
-                        }
-                      },
-                    ),
+                            child: Text("Clear All")),
+                      ),
+                      Expanded(
+                        child: CustomElevatedButton(
+                          label: "Detect",
+                          onPressed: () {
+                            if (_formKey.currentState!.validate()) {
+                              Map<String, int> formData = {
+                                "Age": int.tryParse(_controllers[0].text) ?? 0,
+                                "Gender": selectedGender,
+                                "Total Bilirubin":
+                                    int.tryParse(_controllers[1].text) ?? 0,
+                                "Direct Bilirubin":
+                                    int.tryParse(_controllers[2].text) ?? 0,
+                                "Alkaline Phosphotase":
+                                    int.tryParse(_controllers[3].text) ?? 0,
+                                "Alamine Aminotransferase":
+                                    int.tryParse(_controllers[4].text) ?? 0,
+                                "Aspartate Aminotransferase":
+                                    int.tryParse(_controllers[5].text) ?? 0,
+                                "Total Proteins":
+                                    int.tryParse(_controllers[6].text) ?? 0,
+                                "Albumin":
+                                    int.tryParse(_controllers[7].text) ?? 0,
+                                "Albumin and Globulin Ratio":
+                                    int.tryParse(_controllers[8].text) ?? 0,
+                              };
+
+                              provider.detectDisease(formData);
+
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    title: Text("Result"),
+                                    content: Text(provider.result),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () => Navigator.pop(context),
+                                        child: Text("OK"),
+                                      )
+                                    ],
+                                  );
+                                },
+                              );
+                            }
+                          },
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),

@@ -18,6 +18,9 @@ class CustomElevatedButton extends StatelessWidget {
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12))),
         onPressed: onPressed,
-        child: Text(label));
+        child: Text(
+          label,
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+        ));
   }
 }

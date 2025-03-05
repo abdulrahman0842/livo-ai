@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:livoai/widgets/custom_elevated_button.dart';
 import '../services/text_service.dart';
 import '../utils/utils.dart';
 import 'data_screen.dart';
@@ -20,7 +21,7 @@ class _HomeScreenState extends State<HomeScreen> {
   String recognizedText = '';
 
   // This Function Pick an image and extracts data from it and return that text.
-  void _pickImageAndExtractText(bool fromCamera) async {
+  _pickImageAndExtractText(bool fromCamera) async {
     XFile? image = await _picker.pickImage(
         source: fromCamera ? ImageSource.camera : ImageSource.gallery);
     if (image == null) return;
@@ -39,10 +40,16 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text("Livo AI"),
-        actions: [IconButton(onPressed: (){
-          // showDialog(context: context, builder:(context)=>AlertDialog())
-        }, icon: Icon(Icons.add))],),
+        appBar: AppBar(
+          title: Text("Livo AI"),
+          actions: [
+            IconButton(
+                onPressed: () {
+                  // showDialog(context: context, builder:(context)=>AlertDialog())
+                },
+                icon: Icon(Icons.add))
+          ],
+        ),
         body: SingleChildScrollView(
           child: Center(
             child: Column(
@@ -60,28 +67,61 @@ class _HomeScreenState extends State<HomeScreen> {
                                   image: FileImage(File(file!.path)))),
                         )
                       : Container(),
-                  ElevatedButton(
-                      onPressed: () {
-                        _pickImageAndExtractText(true);
-                      },
-                      child: Text('Pick Image from Camera')),
-                  ElevatedButton(
-                      onPressed: () {
-                        _pickImageAndExtractText(false);
-                      },
-                      child: Text('Pick Image from Gallery')),
-                  ElevatedButton(
-                      onPressed: () {
-                        getCompositions(context);
-                      },
-                      child: Text('Extract Compositions')),
+                  CustomElevatedButton(
+                    label: 'Pick Image from Camera',
+                    onPressed: () {
+                      _pickImageAndExtractText(true);
+                    },
+                  ),
+                  CustomElevatedButton(
+                    label: 'Pick Image from Gallery',
+                    onPressed: () {
+                      _pickImageAndExtractText(false);
+                    },
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      CustomElevatedButton(
+                        label: 'Extract Raw Text',
+                        onPressed: () async {
+                          if (file != null) {
+                            String text =
+                                await TextService().recognizeText(file!);
+                            showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                      title: Text("Raw Text"),
+                                      content: Text(text),
+                                    ));
+                          }
+                        },
+                      ),
+                      CustomElevatedButton(
+                        label: 'Extract Compositions',
+                        onPressed: () {
+                          // getCompositions(context);
+                          if (file != null) {
+                            Map<String, dynamic> compositions = TextService()
+                                .extractCompositions(recognizedText);
+                            showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                      title: Text("Filtered Text"),
+                                      content: Text(compositions.toString()),
+                                    ));
+                          }
+                        },
+                      )
+                    ],
+                  ),
                 ]),
           ),
         ));
   }
 
   void getCompositions(BuildContext context) {
-    if (file != null &&  recognizedText.isNotEmpty) {
+    if (file != null && recognizedText.isNotEmpty) {
       Map<String, dynamic> extractedComposition =
           TextService().extractCompositions(recognizedText);
       if (extractedComposition.isNotEmpty) {

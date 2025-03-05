@@ -10,7 +10,6 @@ class DataScreen extends StatefulWidget {
 }
 
 class _DataScreenState extends State<DataScreen> {
-
   final apiController = TextEditingController();
   @override
   Widget build(BuildContext context) {
@@ -18,6 +17,7 @@ class _DataScreenState extends State<DataScreen> {
       backgroundColor: Colors.white,
       appBar: AppBar(title: Text("Result")),
       body: Center(
+          child: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -48,15 +48,31 @@ class _DataScreenState extends State<DataScreen> {
                     }),
               ),
             ),
-            TextField(controller: apiController,decoration: InputDecoration(hintText: "API ENDPOINT"),),
-            ElevatedButton(onPressed: () {
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextField(
+                controller: apiController,
+                decoration: InputDecoration(hintText: "API ENDPOINT"),
+              ),
+            ),
+            ElevatedButton(
+                onPressed: () async {
+                  String response = await ApiService()
+                      .detectDisease(widget.data,);
 
-              ApiService().predictDisease(widget.data,apiController.text);
-            }, child: Text("Predict")),
+                  showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          content: Text(response),
+                        );
+                      });
+                },
+                child: Text("Predict")),
             SizedBox()
           ],
         ),
-      ),
+      )),
     );
   }
 }

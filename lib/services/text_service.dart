@@ -2,7 +2,6 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:livoai/models/compositions_model.dart';
 
 class TextService {
   final TextRecognizer textRecognizer = TextRecognizer();
@@ -10,8 +9,15 @@ class TextService {
   Future<String> recognizeText(XFile image) async {
     final RecognizedText recognizedText = await textRecognizer
         .processImage(InputImage.fromFile(File(image.path)));
-    log("Text: ${recognizedText.text}");
 
+    log("Extracted Text (RAW): ${recognizedText.text}");
+    List<String> lines = [];
+    for (TextBlock block in recognizedText.blocks) {
+      for (TextLine line in block.lines) {
+        lines.add(line.text.trim());
+      }
+    }
+    log("LINES of TEXT: $lines");
     return recognizedText.text;
   }
 
@@ -32,7 +38,8 @@ class TextService {
   (\d+(\.\d+)?)) : it will capture level of compositions like 4.5, 84.5 259.3, 45 etc (and decimal capture is optional bcz some don't have decimal points)
 */
 
-    RegExp generalPattern = RegExp(r"((\b\w+\b)\s*[-=:>]?\s*(\d+(\.\d+)?))");
+    RegExp generalPattern =
+        RegExp(r"((\b\w+\s*\w+\b)\s*[-=:>]?\s*(\d+(\.\d+)?))");
 
     List<Match> matches = generalPattern.allMatches(text).toList();
     List<String> compositions =
@@ -45,7 +52,27 @@ class TextService {
     return mapOfComposition(compositions);
   }
 
+//   Map<String, dynamic> extractCompositionsGpt(String text) {
+//     RegExp pattern = RegExp(r"([\w\s&]+?)\s*[-=:>]\s*(\d+(\.\d+)?)");
+
+//     Map<String, dynamic> extractedData = {};
+
+//     for (Match match in pattern.allMatches(text)) {
+//       String key = match.group(1)?.trim() ?? "";
+//       String value = match.group(2) ?? "0";
+
+//       if (key.isNotEmpty) {
+//         extractedData[key] = double.tryParse(value) ?? value;
+//       }
+//     }
+
+//     log("Extracted Compositions: $extractedData");
+//     return extractedData;
+//   }
+// }
+
   Map<String, dynamic> mapOfComposition(List<String> compositions) {
+   
     Map<String, dynamic> data = {};
     RegExp getName = RegExp(r"(\b\w+\b)");
     RegExp getLevel = RegExp(r"(\d+(\.\d+)?)");
